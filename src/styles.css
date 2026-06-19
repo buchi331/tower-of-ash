@@ -6,3 +6,26 @@ body { background: var(--bg); color: var(--ink); font-family: system-ui, sans-se
   overscroll-behavior: none; user-select: none; }
 button { font: inherit; color: inherit; cursor: pointer; }
 .app { max-width: 480px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; }
+
+.combat { display: flex; flex-direction: column; flex: 1; padding: 12px; gap: 12px; }
+.enemy-area { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
+.enemy-name { font-size: 20px; font-weight: 600; }
+.intent { color: var(--gold); margin: 6px 0; font-size: 14px; }
+.bar { position: relative; height: 22px; background: #241f44; border-radius: 11px; overflow: hidden; margin: 6px 0; }
+.bar-fill { position: absolute; inset: 0; background: var(--red); transition: width .25s ease; }
+.bar-label { position: relative; font-size: 12px; line-height: 22px; }
+.status { font-size: 12px; color: var(--muted); min-height: 16px; }
+.player-area { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.player-area .bar-fill { background: #4caf6a; }
+.resources { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.energy { color: #ffd76a; font-weight: 600; }
+.btn { background: #241f44; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+.end-turn { margin-left: auto; background: var(--purple); border-color: var(--purple); }
+.hand { display: flex; gap: 8px; overflow-x: auto; padding: 8px 4px; margin-top: auto; }
+.card { flex: 0 0 96px; height: 132px; background: #15122b; border: 2px solid var(--line); border-radius: 10px;
+  padding: 8px; display: flex; flex-direction: column; text-align: left; transition: transform .08s; }
+.card:active:not(:disabled) { transform: translateY(-6px); }
+.card-cost { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #ffd76a; color: #000;
+  font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.card-name { margin-top: 26px; font-weight: 600; font-size: 14px; }
+.card-text { margin-top: 6px; font-size: 11px; color: var(--muted); line-height: 1.3; }

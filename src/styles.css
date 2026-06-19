@@ -44,3 +44,10 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .floor.current { color: #fff; transform: scale(1.4); }
 .deck-list { list-style: none; padding: 0; width: 100%; max-width: 320px; }
 .deck-list li { display: flex; justify-content: space-between; padding: 8px 4px; border-bottom: 1px solid var(--line); }
+
+.enemy-area, .player-area { position: relative; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+.shake { animation: shake .2s; }
+@keyframes pop { 0%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-30px)} }
+.dmg-pop { position: absolute; top: 8px; right: 14px; font-size: 26px; font-weight: 800; color: #ff5a4d;
+  animation: pop .6s ease-out forwards; pointer-events: none; }

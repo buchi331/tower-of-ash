@@ -2,6 +2,7 @@ import type { CombatState } from '../model/types'
 import { currentIntent } from '../engine/combat'
 import { CARDS } from '../content/cards'
 import { Card } from './Card'
+import { useHitFeedback } from './useHitFeedback'
 
 function Bar({ hp, max }: { hp: number; max: number }) {
   return (
@@ -38,16 +39,20 @@ export function CombatScreen({ combat, onPlay, onEndTurn, onOpenDeck }: {
   onOpenDeck: () => void
 }) {
   const { player, enemy, hand } = combat
+  const enemyFx = useHitFeedback(enemy.hp)
+  const playerFx = useHitFeedback(player.hp)
   return (
     <div className="combat">
-      <div className="enemy-area">
+      <div className={`enemy-area${enemyFx.shake ? ' shake' : ''}`}>
+        {enemyFx.pop && <span key={enemyFx.pop.key} className="dmg-pop">{enemyFx.pop.delta}</span>}
         <div className="enemy-name">{enemy.def.name}</div>
         <div className="intent">予告: {intentText(combat)}</div>
         <Bar hp={enemy.hp} max={enemy.maxHp} />
         <div className="status">{enemy.block > 0 ? `🛡 ${enemy.block}　` : ''}{statusLine(enemy.status)}</div>
       </div>
 
-      <div className="player-area">
+      <div className={`player-area${playerFx.shake ? ' shake' : ''}`}>
+        {playerFx.pop && <span key={playerFx.pop.key} className="dmg-pop">{playerFx.pop.delta}</span>}
         <Bar hp={player.hp} max={player.maxHp} />
         <div className="status">{player.block > 0 ? `🛡 ${player.block}　` : ''}{statusLine(player.status)}</div>
         <div className="resources">

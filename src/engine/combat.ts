@@ -56,5 +56,55 @@ export function createCombat(
   return s
 }
 
+// damage = (base + attacker strength), then weak (-25%), then target vulnerable (+50%)
+function calcDamage(base: number, attacker: StatusEffects, target: StatusEffects): number {
+  let dmg = base + attacker.strength
+  if (attacker.weak > 0) dmg = Math.floor(dmg * 0.75)
+  if (target.vulnerable > 0) dmg = Math.floor(dmg * 1.5)
+  return Math.max(0, dmg)
+}
+
+function applyDamage(target: { hp: number; block: number }, dmg: number): void {
+  const blocked = Math.min(target.block, dmg)
+  target.block -= blocked
+  target.hp -= dmg - blocked
+}
+
+function checkWin(s: CombatState): void {
+  if (s.enemy.hp <= 0) s.phase = 'won'
+}
+
+export function playCard(state: CombatState, handIndex: number, rng: RNG, cards: CardTable): CombatState {
+  if (state.phase !== 'player') return state
+  const id = state.hand[handIndex]
+  if (id == null) return state
+  const card = cards[id]
+  if (!card || card.cost > state.player.energy) return state
+
+  const s: CombatState = structuredClone(state)
+  s.player.energy -= card.cost
+  s.hand.splice(handIndex, 1)
+
+  for (const e of card.effects) {
+    switch (e.kind) {
+      case 'damage': {
+        const hits = e.times ?? 1
+        for (let i = 0; i < hits; i++) {
+          applyDamage(s.enemy, calcDamage(e.amount, s.player.status, s.enemy.status))
+        }
+        break
+      }
+      // remaining effect kinds are added in later tasks
+    }
+  }
+
+  // powers leave play; everything else goes to discard
+  if (card.type !== 'power') s.discardPile.push(id)
+  checkWin(s)
+  return s
+}
+
+export { calcDamage, applyDamage, checkWin }
+
 // exported for use by later tasks within this file
 export { emptyStatus, drawCards, startPlayerTurn }

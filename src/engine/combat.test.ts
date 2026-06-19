@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { makeRng } from './rng'
-import { createCombat } from './combat'
+import { createCombat, playCard } from './combat'
 import type { CardDef, EnemyDef } from '../model/types'
 
 // minimal test fixtures (independent of real content)
@@ -28,5 +28,45 @@ describe('createCombat', () => {
     const s = createCombat(DUMMY, deck, 70, 70, makeRng(1), TEST_CARDS)
     expect(s.hand.length).toBe(3) // can't draw more than exist
     expect(s.drawPile.length).toBe(0)
+  })
+})
+
+describe('playCard — attacks', () => {
+  it('deals damage to the enemy and spends energy', () => {
+    const deck = ['strike', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), TEST_CARDS)
+    const before = s.enemy.hp
+    s = playCard(s, 0, makeRng(1), TEST_CARDS)
+    expect(s.enemy.hp).toBe(before - 6)
+    expect(s.player.energy).toBe(2)
+    expect(s.hand.length).toBe(4)
+    expect(s.discardPile).toContain('strike')
+  })
+
+  it('rejects a card when energy is insufficient', () => {
+    const cards = { ...TEST_CARDS, big: { ...TEST_CARDS.strike, id: 'big', cost: 9 } }
+    const deck = ['big', 'big', 'big', 'big', 'big']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    const snapshot = JSON.stringify(s)
+    s = playCard(s, 0, makeRng(1), cards)
+    expect(JSON.stringify(s)).toBe(snapshot) // unchanged
+  })
+
+  it('marks combat won when the enemy reaches 0 hp', () => {
+    const cards = { ...TEST_CARDS, nuke: { ...TEST_CARDS.strike, id: 'nuke', cost: 0, effects: [{ kind: 'damage' as const, amount: 99 }] } }
+    const deck = ['nuke', 'nuke', 'nuke', 'nuke', 'nuke']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s = playCard(s, 0, makeRng(1), cards)
+    expect(s.enemy.hp).toBeLessThanOrEqual(0)
+    expect(s.phase).toBe('won')
+  })
+
+  it('multi-hit applies damage per hit', () => {
+    const cards = { ...TEST_CARDS, twin: { ...TEST_CARDS.strike, id: 'twin', cost: 1, effects: [{ kind: 'damage' as const, amount: 3, times: 2 }] } }
+    const deck = ['twin', 'twin', 'twin', 'twin', 'twin']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    const before = s.enemy.hp
+    s = playCard(s, 0, makeRng(1), cards)
+    expect(s.enemy.hp).toBe(before - 6)
   })
 })

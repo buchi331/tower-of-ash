@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { makeRng } from './rng'
 import {
-  startRun, currentFloor, isBossFloor, rewardOptions, addCardToDeck, advanceFloor, recordVictory, recordDefeat, START_HP,
+  startRun, isBossFloor, rewardOptions, addCardToDeck, advanceFloor, recordVictory, recordDefeat, START_HP,
 } from './run'
 import { STARTER_DECK } from '../content/cards'
 

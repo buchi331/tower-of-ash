@@ -1,0 +1,8 @@
+:root { --bg:#0d0b1f; --panel:#171430; --ink:#ece9ff; --muted:#9b93c7; --line:#332c5a;
+  --red:#e2574c; --blue:#4f8de0; --purple:#a855f7; --gold:#e8c170; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body, #root { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: system-ui, sans-serif;
+  overscroll-behavior: none; user-select: none; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.app { max-width: 480px; margin: 0 auto; min-height: 100%; display: flex; flex-direction: column; }

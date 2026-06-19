@@ -203,3 +203,45 @@ describe('endTurn — enemy AI', () => {
     expect(currentIntent(s)).toEqual({ kind: 'attack', value: 7 })
   })
 })
+
+describe('combat — coverage', () => {
+  it('weak reduces the attacker\'s damage by 25%', () => {
+    const deck = ['strike', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), TEST_CARDS)
+    s.player.status.weak = 1
+    const before = s.enemy.hp
+    s = playCard(s, 0, makeRng(1), TEST_CARDS)
+    // 6 base, weak → floor(6 * 0.75) = 4
+    expect(s.enemy.hp).toBe(before - 4)
+  })
+
+  it('poison kills the player at turn start → phase \'lost\'', () => {
+    const deck = ['strike', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat({ ...DUMMY, intentPattern: [{ kind: 'defend', value: 5 }] }, deck, 70, 70, makeRng(1), TEST_CARDS)
+    s.player.hp = 3
+    s.player.status.poison = 5
+    s = endTurn(s, makeRng(1), TEST_CARDS)
+    // player poison ticks at start of next player turn: 3 - 5 = -2 → phase 'lost'
+    expect(s.phase).toBe('lost')
+  })
+
+  it('enemy poison kills the enemy at the start of endTurn → phase \'won\'', () => {
+    const deck = ['strike', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), TEST_CARDS)
+    s.enemy.hp = 2
+    s.enemy.status.poison = 5
+    s = endTurn(s, makeRng(1), TEST_CARDS)
+    // enemy poison ticks at start of endTurn: 2 - 5 = -3 → phase 'won'
+    expect(s.phase).toBe('won')
+  })
+
+  it('enemy buff intent grants the enemy strength', () => {
+    const deck = ['strike', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(
+      { ...DUMMY, intentPattern: [{ kind: 'buff', status: 'strength', amount: 2 }] },
+      deck, 70, 70, makeRng(1), TEST_CARDS,
+    )
+    s = endTurn(s, makeRng(1), TEST_CARDS)
+    expect(s.enemy.status.strength).toBe(2)
+  })
+})

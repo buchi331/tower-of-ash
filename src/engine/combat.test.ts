@@ -70,3 +70,13 @@ describe('playCard — attacks', () => {
     expect(s.enemy.hp).toBe(before - 6)
   })
 })
+
+describe('playCard — block', () => {
+  it('grants block that absorbs the next damage', () => {
+    const deck = ['defend', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), TEST_CARDS)
+    const i = s.hand.indexOf('defend')
+    s = playCard(s, i, makeRng(1), TEST_CARDS)
+    expect(s.player.block).toBe(5)
+  })
+})

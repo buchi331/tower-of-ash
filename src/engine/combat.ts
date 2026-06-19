@@ -94,6 +94,9 @@ export function playCard(state: CombatState, handIndex: number, rng: RNG, cards:
         }
         break
       }
+      case 'block':
+        s.player.block += e.amount
+        break
       // remaining effect kinds are added in later tasks
     }
   }

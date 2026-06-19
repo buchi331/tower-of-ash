@@ -31,14 +31,11 @@ export interface CardDef {
   effects: CardEffect[]
 }
 
-export type IntentKind = 'attack' | 'defend' | 'buff' | 'debuff'
-export interface IntentStep {
-  kind: IntentKind
-  value?: number
-  times?: number
-  status?: StatusKey
-  amount?: number
-}
+export type IntentStep =
+  | { kind: 'attack'; value: number; times?: number }
+  | { kind: 'defend'; value: number }
+  | { kind: 'buff'; status: StatusKey; amount: number }
+  | { kind: 'debuff'; status: StatusKey; amount: number }
 
 export interface EnemyDef {
   id: string

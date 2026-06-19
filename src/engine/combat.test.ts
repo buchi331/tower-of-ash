@@ -244,4 +244,13 @@ describe('combat — coverage', () => {
     s = endTurn(s, makeRng(1), TEST_CARDS)
     expect(s.enemy.status.strength).toBe(2)
   })
+
+  it('lethal loseHp ends combat with phase \'lost\'', () => {
+    const cards = { ...TEST_CARDS, suicide: { ...TEST_CARDS.strike, id: 'suicide', cost: 0, effects: [{ kind: 'loseHp' as const, amount: 99 }] } }
+    const deck = ['suicide', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s = playCard(s, s.hand.indexOf('suicide'), makeRng(1), cards)
+    expect(s.player.hp).toBeLessThanOrEqual(0)
+    expect(s.phase).toBe('lost')
+  })
 })

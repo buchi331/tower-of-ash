@@ -13,7 +13,7 @@ function emptyStatus(): StatusEffects {
 function drawCards(s: CombatState, n: number, rng: RNG): void {
   for (let i = 0; i < n; i++) {
     if (s.drawPile.length === 0) {
-      if (s.discardPile.length === 0) return
+      if (s.discardPile.length === 0) return // both piles empty — draws what's available and stops
       s.drawPile = shuffle(s.discardPile, rng)
       s.discardPile = []
     }
@@ -37,9 +37,8 @@ function startPlayerTurn(s: CombatState, rng: RNG): void {
 }
 
 export function createCombat(
-  enemyDef: EnemyDef, deck: readonly string[], playerHp: number, maxHp: number, rng: RNG, cards: CardTable,
+  enemyDef: EnemyDef, deck: readonly string[], playerHp: number, maxHp: number, rng: RNG, _cards: CardTable,
 ): CombatState {
-  void cards // cards table is used by playCard; accepted here to fix the signature for all callers
   const player: PlayerCombatState = {
     hp: playerHp, maxHp, block: 0, status: emptyStatus(), energy: 0, maxEnergy: 3, poisonOnAttack: 0,
   }
@@ -72,6 +71,10 @@ function applyDamage(target: { hp: number; block: number }, dmg: number): void {
 
 function checkWin(s: CombatState): void {
   if (s.enemy.hp <= 0) s.phase = 'won'
+}
+
+function checkLost(s: CombatState): void {
+  if (s.phase !== 'won' && s.player.hp <= 0) s.phase = 'lost'
 }
 
 export function playCard(state: CombatState, handIndex: number, rng: RNG, cards: CardTable): CombatState {
@@ -130,10 +133,11 @@ export function playCard(state: CombatState, handIndex: number, rng: RNG, cards:
   // powers leave play; everything else goes to discard
   if (card.type !== 'power') s.discardPile.push(id)
   checkWin(s)
+  checkLost(s)
   return s
 }
 
-export { calcDamage, applyDamage, checkWin }
+export { calcDamage, applyDamage, checkWin, checkLost }
 
 export function currentIntent(s: CombatState): IntentStep {
   const p = s.enemy.def.intentPattern
@@ -151,18 +155,18 @@ function runEnemyAction(s: CombatState): void {
     case 'attack': {
       const hits = step.times ?? 1
       for (let i = 0; i < hits; i++) {
-        applyDamage(s.player, calcDamage(step.value ?? 0, s.enemy.status, s.player.status))
+        applyDamage(s.player, calcDamage(step.value, s.enemy.status, s.player.status))
       }
       break
     }
     case 'defend':
-      s.enemy.block += step.value ?? 0
+      s.enemy.block += step.value
       break
     case 'buff':
-      if (step.status) s.enemy.status[step.status] += step.amount ?? 0
+      s.enemy.status[step.status] += step.amount
       break
     case 'debuff':
-      if (step.status) s.player.status[step.status] += step.amount ?? 0
+      s.player.status[step.status] += step.amount
       break
   }
   s.enemy.intentIndex += 1
@@ -179,7 +183,7 @@ export function endTurn(state: CombatState, rng: RNG, _cards: CardTable): Combat
 
   // enemy turn
   s.phase = 'enemy'
-  s.enemy.block = 0
+  s.enemy.block = 0 // enemy block resets at the start of the enemy phase, not the player turn
   if (s.enemy.status.poison > 0) {
     s.enemy.hp -= s.enemy.status.poison
     s.enemy.status.poison -= 1

@@ -197,6 +197,3 @@ export function endTurn(state: CombatState, rng: RNG, _cards: CardTable): Combat
   startPlayerTurn(s, rng)
   return s
 }
-
-// exported for use by later tasks within this file
-export { emptyStatus, drawCards, startPlayerTurn }

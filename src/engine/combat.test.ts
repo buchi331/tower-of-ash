@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { makeRng } from './rng'
-import { createCombat, playCard } from './combat'
+import { createCombat, playCard, endTurn, currentIntent } from './combat'
 import type { CardDef, EnemyDef } from '../model/types'
 
 // minimal test fixtures (independent of real content)
@@ -164,5 +164,42 @@ describe('playCard — utility effects', () => {
     expect(s.player.poisonOnAttack).toBe(1)
     s = playCard(s, s.hand.indexOf('strike'), makeRng(1), cards)
     expect(s.enemy.status.poison).toBe(1)
+  })
+})
+
+describe('endTurn — enemy AI', () => {
+  it('discards hand and runs the enemy attack, reduced by player block', () => {
+    const deck = ['defend', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat({ ...DUMMY, intentPattern: [{ kind: 'attack', value: 5 }] }, deck, 70, 70, makeRng(1), TEST_CARDS)
+    s = playCard(s, s.hand.indexOf('defend'), makeRng(1), TEST_CARDS) // +5 block
+    s = endTurn(s, makeRng(1), TEST_CARDS)
+    expect(s.player.hp).toBe(70) // 5 dmg fully blocked
+    expect(s.phase).toBe('player')
+    expect(s.turn).toBe(2)
+    expect(s.hand.length).toBe(5) // fresh hand
+  })
+
+  it('enemy defend grants the enemy block', () => {
+    let s = createCombat({ ...DUMMY, intentPattern: [{ kind: 'defend', value: 8 }] }, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS)
+    s = endTurn(s, makeRng(1), TEST_CARDS)
+    expect(s.enemy.block).toBe(8)
+  })
+
+  it('player dies when enemy damage exceeds hp → phase lost', () => {
+    let s = createCombat({ ...DUMMY, intentPattern: [{ kind: 'attack', value: 999 }] }, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS)
+    s = endTurn(s, makeRng(1), TEST_CARDS)
+    expect(s.phase).toBe('lost')
+  })
+
+  it('player vulnerable decays at end of player turn', () => {
+    let s = createCombat({ ...DUMMY, intentPattern: [{ kind: 'defend', value: 1 }] }, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS)
+    s.player.status.vulnerable = 2
+    s = endTurn(s, makeRng(1), TEST_CARDS)
+    expect(s.player.status.vulnerable).toBe(1)
+  })
+
+  it('currentIntent reports the enemy next action', () => {
+    const s = createCombat({ ...DUMMY, intentPattern: [{ kind: 'attack', value: 7 }] }, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS)
+    expect(currentIntent(s)).toEqual({ kind: 'attack', value: 7 })
   })
 })

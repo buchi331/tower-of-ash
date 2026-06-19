@@ -1,5 +1,5 @@
 import type {
-  CardDef, CombatState, EnemyDef, PlayerCombatState, EnemyCombatState, StatusEffects,
+  CardDef, CombatState, EnemyDef, PlayerCombatState, EnemyCombatState, StatusEffects, IntentStep,
 } from '../model/types'
 import { shuffle, type RNG } from './rng'
 
@@ -134,6 +134,65 @@ export function playCard(state: CombatState, handIndex: number, rng: RNG, cards:
 }
 
 export { calcDamage, applyDamage, checkWin }
+
+export function currentIntent(s: CombatState): IntentStep {
+  const p = s.enemy.def.intentPattern
+  return p[s.enemy.intentIndex % p.length]
+}
+
+function decayDebuffs(c: { status: StatusEffects }): void {
+  if (c.status.vulnerable > 0) c.status.vulnerable -= 1
+  if (c.status.weak > 0) c.status.weak -= 1
+}
+
+function runEnemyAction(s: CombatState): void {
+  const step = currentIntent(s)
+  switch (step.kind) {
+    case 'attack': {
+      const hits = step.times ?? 1
+      for (let i = 0; i < hits; i++) {
+        applyDamage(s.player, calcDamage(step.value ?? 0, s.enemy.status, s.player.status))
+      }
+      break
+    }
+    case 'defend':
+      s.enemy.block += step.value ?? 0
+      break
+    case 'buff':
+      if (step.status) s.enemy.status[step.status] += step.amount ?? 0
+      break
+    case 'debuff':
+      if (step.status) s.player.status[step.status] += step.amount ?? 0
+      break
+  }
+  s.enemy.intentIndex += 1
+}
+
+export function endTurn(state: CombatState, rng: RNG, _cards: CardTable): CombatState {
+  if (state.phase !== 'player') return state
+  const s: CombatState = structuredClone(state)
+
+  // discard remaining hand
+  s.discardPile.push(...s.hand)
+  s.hand = []
+  decayDebuffs(s.player)
+
+  // enemy turn
+  s.phase = 'enemy'
+  s.enemy.block = 0
+  if (s.enemy.status.poison > 0) {
+    s.enemy.hp -= s.enemy.status.poison
+    s.enemy.status.poison -= 1
+  }
+  if (s.enemy.hp <= 0) { s.phase = 'won'; return s }
+
+  runEnemyAction(s)
+  if (s.player.hp <= 0) { s.phase = 'lost'; return s }
+  decayDebuffs(s.enemy)
+
+  startPlayerTurn(s, rng)
+  return s
+}
 
 // exported for use by later tasks within this file
 export { emptyStatus, drawCards, startPlayerTurn }

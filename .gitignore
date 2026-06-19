@@ -5,6 +5,14 @@ node_modules/
 dist/
 build/
 
+# TypeScript build artifacts (emitted by `tsc -b` composite build)
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# local tooling
+.claude/
+
 # logs
 *.log
 npm-debug.log*

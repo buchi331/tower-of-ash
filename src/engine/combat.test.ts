@@ -80,3 +80,32 @@ describe('playCard — block', () => {
     expect(s.player.block).toBe(5)
   })
 })
+
+describe('playCard — statuses', () => {
+  it('applies vulnerable to the enemy and amplifies later damage by 50%', () => {
+    const cards = {
+      ...TEST_CARDS,
+      bash: { ...TEST_CARDS.strike, id: 'bash', cost: 0, effects: [{ kind: 'applyStatus' as const, status: 'vulnerable' as const, amount: 2, target: 'enemy' as const }] },
+    }
+    const deck = ['bash', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s = playCard(s, s.hand.indexOf('bash'), makeRng(1), cards)
+    expect(s.enemy.status.vulnerable).toBe(2)
+    const before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('strike'), makeRng(1), cards)
+    expect(s.enemy.hp).toBe(before - 9) // 6 * 1.5
+  })
+
+  it('strength increases attack damage', () => {
+    const cards = {
+      ...TEST_CARDS,
+      focus: { ...TEST_CARDS.strike, id: 'focus', type: 'skill' as const, cost: 0, effects: [{ kind: 'applyStatus' as const, status: 'strength' as const, amount: 2, target: 'self' as const }] },
+    }
+    const deck = ['focus', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s = playCard(s, s.hand.indexOf('focus'), makeRng(1), cards)
+    const before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('strike'), makeRng(1), cards)
+    expect(s.enemy.hp).toBe(before - 8) // 6 + 2
+  })
+})

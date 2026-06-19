@@ -97,6 +97,11 @@ export function playCard(state: CombatState, handIndex: number, rng: RNG, cards:
       case 'block':
         s.player.block += e.amount
         break
+      case 'applyStatus': {
+        const who = e.target === 'self' ? s.player.status : s.enemy.status
+        who[e.status] += e.amount
+        break
+      }
       // remaining effect kinds are added in later tasks
     }
   }

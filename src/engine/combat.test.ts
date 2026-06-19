@@ -109,3 +109,60 @@ describe('playCard — statuses', () => {
     expect(s.enemy.hp).toBe(before - 8) // 6 + 2
   })
 })
+
+describe('playCard — utility effects', () => {
+  it('draw + gainEnergy', () => {
+    const cards = {
+      ...TEST_CARDS,
+      adr: { ...TEST_CARDS.defend, id: 'adr', cost: 0, effects: [{ kind: 'draw' as const, amount: 2 }, { kind: 'gainEnergy' as const, amount: 1 }] },
+    }
+    const deck = ['adr', 'strike', 'strike', 'strike', 'strike', 'defend', 'defend']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    const handBefore = s.hand.length // 5 (adr drawn into opening hand)
+    s = playCard(s, s.hand.indexOf('adr'), makeRng(1), cards)
+    expect(s.hand.length).toBe(handBefore - 1 + 2) // played 1, drew 2
+    expect(s.player.energy).toBe(3 - 0 + 1)
+  })
+
+  it('heal does not exceed maxHp', () => {
+    const cards = { ...TEST_CARDS, life: { ...TEST_CARDS.defend, id: 'life', cost: 0, effects: [{ kind: 'heal' as const, amount: 10 }] } }
+    const deck = ['life', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 65, 70, makeRng(1), cards)
+    s = playCard(s, s.hand.indexOf('life'), makeRng(1), cards)
+    expect(s.player.hp).toBe(70)
+  })
+
+  it('loseHp damages the player directly', () => {
+    const cards = { ...TEST_CARDS, reck: { ...TEST_CARDS.strike, id: 'reck', cost: 0, effects: [{ kind: 'damage' as const, amount: 10 }, { kind: 'loseHp' as const, amount: 3 }] } }
+    const deck = ['reck', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s = playCard(s, s.hand.indexOf('reck'), makeRng(1), cards)
+    expect(s.player.hp).toBe(67)
+  })
+
+  it('damageEqualToBlock uses current block as damage', () => {
+    const cards = {
+      ...TEST_CARDS,
+      sb: { ...TEST_CARDS.strike, id: 'sb', cost: 0, effects: [{ kind: 'damageEqualToBlock' as const }] },
+    }
+    const deck = ['defend', 'sb', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s = playCard(s, s.hand.indexOf('defend'), makeRng(1), cards) // +5 block
+    const before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('sb'), makeRng(1), cards)
+    expect(s.enemy.hp).toBe(before - 5)
+  })
+
+  it('poisonOnAttack power adds poison whenever an attack is played', () => {
+    const cards = {
+      ...TEST_CARDS,
+      pm: { ...TEST_CARDS.defend, id: 'pm', type: 'power' as const, cost: 0, effects: [{ kind: 'poisonOnAttack' as const, amount: 1 }] },
+    }
+    const deck = ['pm', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s = playCard(s, s.hand.indexOf('pm'), makeRng(1), cards)
+    expect(s.player.poisonOnAttack).toBe(1)
+    s = playCard(s, s.hand.indexOf('strike'), makeRng(1), cards)
+    expect(s.enemy.status.poison).toBe(1)
+  })
+})

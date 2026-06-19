@@ -102,8 +102,29 @@ export function playCard(state: CombatState, handIndex: number, rng: RNG, cards:
         who[e.status] += e.amount
         break
       }
-      // remaining effect kinds are added in later tasks
+      case 'draw':
+        drawCards(s, e.amount, rng)
+        break
+      case 'gainEnergy':
+        s.player.energy += e.amount
+        break
+      case 'heal':
+        s.player.hp = Math.min(s.player.maxHp, s.player.hp + e.amount)
+        break
+      case 'loseHp':
+        s.player.hp -= e.amount
+        break
+      case 'damageEqualToBlock':
+        applyDamage(s.enemy, calcDamage(s.player.block, s.player.status, s.enemy.status))
+        break
+      case 'poisonOnAttack':
+        s.player.poisonOnAttack += e.amount
+        break
     }
+  }
+
+  if (card.type === 'attack' && s.player.poisonOnAttack > 0) {
+    s.enemy.status.poison += s.player.poisonOnAttack
   }
 
   // powers leave play; everything else goes to discard

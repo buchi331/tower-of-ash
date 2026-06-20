@@ -9,7 +9,7 @@ export const CARDS: Record<string, CardDef> = {
   poisonblade:  { id: 'poisonblade', name: '毒刃', type: 'attack', cost: 1, color: 'red', art: 'flask', text: '5ダメージ。毒3。', effects: [{ kind: 'damage', amount: 5 }, { kind: 'applyStatus', status: 'poison', amount: 3, target: 'enemy' }] },
   lifesteal:    { id: 'lifesteal', name: '吸血', type: 'attack', cost: 2, color: 'red', art: 'droplet', text: '8ダメージ。4回復。', effects: [{ kind: 'damage', amount: 8 }, { kind: 'heal', amount: 4 }] },
   allout:       { id: 'allout', name: '渾身', type: 'attack', cost: 3, color: 'red', art: 'flame', text: '22ダメージ。', effects: [{ kind: 'damage', amount: 22 }] },
-  reckless:     { id: 'reckless', name: '捨て身', type: 'attack', cost: 0, color: 'red', art: 'skull', text: '10ダメージ。自分に3ダメージ。', effects: [{ kind: 'damage', amount: 10 }, { kind: 'loseHp', amount: 3 }] },
+  reckless:     { id: 'reckless', name: '捨て身', type: 'attack', cost: 0, color: 'red', art: 'skull', text: '8ダメージ。自分に4ダメージ。', effects: [{ kind: 'damage', amount: 8 }, { kind: 'loseHp', amount: 4 }] },
   shieldbash:   { id: 'shieldbash', name: '盾打ち', type: 'attack', cost: 1, color: 'red', art: 'shield-bolt', text: '現在のブロック値と同じダメージ。', effects: [{ kind: 'damageEqualToBlock' }] },
   ironwall:     { id: 'ironwall', name: '鉄壁', type: 'skill', cost: 2, color: 'blue', art: 'wall', text: '12ブロック。', effects: [{ kind: 'block', amount: 12 }] },
   focus:        { id: 'focus', name: '集中', type: 'skill', cost: 1, color: 'purple', art: 'up', text: '力+2。', effects: [{ kind: 'applyStatus', status: 'strength', amount: 2, target: 'self' }] },
@@ -17,6 +17,13 @@ export const CARDS: Record<string, CardDef> = {
   poisonmastery:{ id: 'poisonmastery', name: '毒の心得', type: 'power', cost: 1, color: 'purple', art: 'biohazard', text: '攻撃をプレイするたび毒1。', effects: [{ kind: 'poisonOnAttack', amount: 1 }] },
   adrenaline:   { id: 'adrenaline', name: '戦機', type: 'skill', cost: 0, color: 'blue', art: 'run', text: '2枚引く。エネルギー+1。', effects: [{ kind: 'draw', amount: 2 }, { kind: 'gainEnergy', amount: 1 }] },
   insight:      { id: 'insight', name: '見極め', type: 'skill', cost: 1, color: 'blue', art: 'eye', text: '2枚引く。', effects: [{ kind: 'draw', amount: 2 }] },
+  weaken:        { id: 'weaken', name: '衰え', type: 'skill', cost: 1, color: 'blue', art: 'down', text: '敵を弱体2。', effects: [{ kind: 'applyStatus', status: 'weak', amount: 2, target: 'enemy' }] },
+  venommist:     { id: 'venommist', name: '毒霧', type: 'skill', cost: 1, color: 'purple', art: 'cloud', text: '毒6。', effects: [{ kind: 'applyStatus', status: 'poison', amount: 6, target: 'enemy' }] },
+  flurry:        { id: 'flurry', name: '乱れ突き', type: 'attack', cost: 1, color: 'red', art: 'arrows', text: '2ダメージ×3。', effects: [{ kind: 'damage', amount: 2, times: 3 }] },
+  riposte:       { id: 'riposte', name: '受け流し', type: 'skill', cost: 1, color: 'blue', art: 'parry', text: '6ブロック。敵に5ダメージ。', effects: [{ kind: 'block', amount: 6 }, { kind: 'damage', amount: 5 }] },
+  conflagration: { id: 'conflagration', name: '業火', type: 'attack', cost: 2, color: 'red', art: 'fire-burst', text: '11ダメージ。脆弱1。', effects: [{ kind: 'damage', amount: 11 }, { kind: 'applyStatus', status: 'vulnerable', amount: 1, target: 'enemy' }] },
+  channel:       { id: 'channel', name: '練気', type: 'skill', cost: 1, color: 'purple', art: 'spiral', text: '力+1。1枚引く。', effects: [{ kind: 'applyStatus', status: 'strength', amount: 1, target: 'self' }, { kind: 'draw', amount: 1 }] },
+  corrode:       { id: 'corrode', name: '腐食', type: 'attack', cost: 1, color: 'purple', art: 'acid', text: '敵の毒に等しいダメージ。', effects: [{ kind: 'damageEqualToEnemyPoison' }] },
 }
 
 export const STARTER_DECK: string[] = [
@@ -28,4 +35,5 @@ export const STARTER_DECK: string[] = [
 export const REWARD_POOL: string[] = [
   'bash', 'twinslash', 'heavy', 'poisonblade', 'lifesteal', 'allout', 'reckless',
   'shieldbash', 'ironwall', 'focus', 'inflame', 'poisonmastery', 'adrenaline', 'insight',
+  'weaken', 'venommist', 'flurry', 'riposte', 'conflagration', 'channel', 'corrode',
 ]

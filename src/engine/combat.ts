@@ -166,6 +166,12 @@ export function playCard(state: CombatState, handIndex: number, rng: RNG, cards:
       case 'poisonOnAttack':
         s.player.poisonOnAttack += e.amount
         break
+      case 'damageEqualToEnemyPoison': {
+        let base = s.enemy.status.poison
+        if (firstAtkBonus > 0) { base += firstAtkBonus; firstAtkBonus = 0 }
+        applyDamage(s.enemy, calcDamage(base, s.player.status, s.enemy.status))
+        break
+      }
     }
   }
 

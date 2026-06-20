@@ -306,3 +306,48 @@ describe('combat — relics', () => {
     expect(s.player.block).toBe(0)
   })
 })
+
+import { CARDS } from '../content/cards'
+
+describe('combat — new effects', () => {
+  it('damageEqualToEnemyPoison deals damage equal to enemy poison without consuming it', () => {
+    const cards = {
+      ...TEST_CARDS,
+      corrode: { id: 'corrode', name: '腐食', type: 'attack' as const, cost: 0, color: 'purple' as const, art: 'acid', text: '', effects: [{ kind: 'damageEqualToEnemyPoison' as const }] },
+    }
+    const deck = ['corrode', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    s.enemy.status.poison = 5
+    const before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('corrode'), makeRng(1), cards)
+    expect(s.enemy.hp).toBe(before - 5)
+    expect(s.enemy.status.poison).toBe(5) // poison is NOT consumed
+  })
+
+  it('flurry-style damage amount:2 times:3 deals 6 total', () => {
+    const flurry = CARDS['flurry']
+    const cards = { ...TEST_CARDS, flurry }
+    const deck = ['flurry', 'strike', 'strike', 'strike', 'strike']
+    let s = createCombat(DUMMY, deck, 70, 70, makeRng(1), cards)
+    const before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('flurry'), makeRng(1), cards)
+    expect(s.enemy.hp).toBe(before - 6) // 2 × 3
+  })
+})
+
+describe('content — new cards present in CARDS and REWARD_POOL', () => {
+  const NEW_IDS = ['weaken', 'venommist', 'flurry', 'riposte', 'conflagration', 'channel', 'corrode']
+
+  it('all 7 new card ids exist in CARDS', () => {
+    for (const id of NEW_IDS) {
+      expect(CARDS[id], `CARDS['${id}'] should be defined`).toBeDefined()
+    }
+  })
+
+  it('all 7 new card ids are present in REWARD_POOL', async () => {
+    const { REWARD_POOL } = await import('../content/cards')
+    for (const id of NEW_IDS) {
+      expect(REWARD_POOL, `REWARD_POOL should contain '${id}'`).toContain(id)
+    }
+  })
+})

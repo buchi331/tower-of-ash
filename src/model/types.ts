@@ -19,6 +19,7 @@ export type CardEffect =
   | { kind: 'loseHp'; amount: number }
   | { kind: 'damageEqualToBlock' }
   | { kind: 'poisonOnAttack'; amount: number }
+  | { kind: 'damageEqualToEnemyPoison' }
 
 export interface CardDef {
   id: string

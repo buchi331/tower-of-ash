@@ -13,7 +13,7 @@ export const ENEMIES: Record<string, EnemyDef> = {
   ghoul: { id: 'ghoul', name: '屍喰い', maxHp: 30, intentPattern: [
     { kind: 'attack', value: 6 }, { kind: 'debuff', status: 'poison', amount: 3 }, { kind: 'attack', value: 6 },
   ] },
-  wraith: { id: 'wraith', name: '影', maxHp: 34, intentPattern: [
+  wraith: { id: 'wraith', name: '影', maxHp: 38, intentPattern: [
     { kind: 'defend', value: 10 }, { kind: 'attack', value: 9 },
   ] },
   cursemage: { id: 'cursemage', name: '呪術師', maxHp: 55, intentPattern: [
@@ -22,7 +22,7 @@ export const ENEMIES: Record<string, EnemyDef> = {
   sentinel: { id: 'sentinel', name: '鎧の番人', maxHp: 64, intentPattern: [
     { kind: 'defend', value: 14 }, { kind: 'attack', value: 18 },
   ] },
-  ashking: { id: 'ashking', name: '灰の王', maxHp: 120, intentPattern: [
+  ashking: { id: 'ashking', name: '灰の王', maxHp: 132, intentPattern: [
     { kind: 'attack', value: 16 }, { kind: 'debuff', status: 'weak', amount: 2 },
     { kind: 'buff', status: 'strength', amount: 2 }, { kind: 'attack', value: 12 }, { kind: 'defend', value: 16 },
   ] },

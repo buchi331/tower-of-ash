@@ -3,7 +3,7 @@ import { Card } from './Card'
 
 export function RewardScreen({ rewards, onChoose }: { rewards: string[]; onChoose: (id: string | null) => void }) {
   return (
-    <div className="screen">
+    <div className="screen reward-screen">
       <h2>カードを選ぶ</h2>
       <div className="reward-cards">
         {rewards.map((id, i) => <Card key={`${id}-${i}`} card={CARDS[id]} onPlay={() => onChoose(id)} />)}

@@ -6,9 +6,10 @@ import { Card } from './Card'
 import { useHitFeedback } from './useHitFeedback'
 
 function Bar({ hp, max }: { hp: number; max: number }) {
+  const pct = Math.max(0, Math.min(100, (hp / max) * 100))
   return (
     <div className="bar">
-      <div className="bar-fill" style={{ width: `${Math.max(0, Math.min(100, (hp / max) * 100))}%` }} />
+      <div className="bar-fill" style={{ width: `${pct}%` }} />
       <span className="bar-label">{Math.max(0, hp)} / {max}</span>
     </div>
   )
@@ -19,18 +20,27 @@ function intentText(s: CombatState): string {
   switch (it.kind) {
     case 'attack': return `攻撃 ${it.value}${it.times && it.times > 1 ? ` ×${it.times}` : ''}`
     case 'defend': return `防御 ${it.value}`
-    case 'buff': return `強化 (${it.status})`
-    case 'debuff': return `弱化 (${it.status} ${it.amount})`
+    case 'buff': return `強化 ${statusName(it.status)} ${it.amount}`
+    case 'debuff': return `弱体 ${statusName(it.status)} ${it.amount}`
+  }
+}
+
+function statusName(status: 'vulnerable' | 'weak' | 'strength' | 'poison'): string {
+  switch (status) {
+    case 'vulnerable': return '脆弱'
+    case 'weak': return '弱体'
+    case 'strength': return '筋力'
+    case 'poison': return '毒'
   }
 }
 
 function statusLine(s: { vulnerable: number; weak: number; strength: number; poison: number }): string {
   const parts: string[] = []
-  if (s.strength) parts.push(`力${s.strength}`)
-  if (s.vulnerable) parts.push(`脆弱${s.vulnerable}`)
-  if (s.weak) parts.push(`弱体${s.weak}`)
-  if (s.poison) parts.push(`毒${s.poison}`)
-  return parts.join(' ')
+  if (s.strength) parts.push(`筋力 ${s.strength}`)
+  if (s.vulnerable) parts.push(`脆弱 ${s.vulnerable}`)
+  if (s.weak) parts.push(`弱体 ${s.weak}`)
+  if (s.poison) parts.push(`毒 ${s.poison}`)
+  return parts.join(' / ')
 }
 
 export function CombatScreen({ combat, onPlay, onEndTurn, onOpenDeck }: {
@@ -45,25 +55,36 @@ export function CombatScreen({ combat, onPlay, onEndTurn, onOpenDeck }: {
   const enemyArt = getEnemyArt(enemy.def.id)
   return (
     <div className="combat">
-      <div className={`enemy-area${enemyFx.shake ? ' shake' : ''}`}>
+      <section className={`enemy-stage${enemyFx.shake ? ' shake' : ''}`}>
         {enemyFx.pop && <span key={enemyFx.pop.key} className="dmg-pop">{enemyFx.pop.delta}</span>}
-        {enemyArt && <img className="enemy-art" src={enemyArt} alt="" aria-hidden="true" />}
-        <div className="enemy-name">{enemy.def.name}</div>
-        <div className="intent">予告: {intentText(combat)}</div>
+        <div className="enemy-frame">
+          {enemyArt && <img className="enemy-art" src={enemyArt} alt="" aria-hidden="true" />}
+          <div className="enemy-vignette" />
+        </div>
+        <div className="enemy-readout">
+          <div>
+            <div className="enemy-label">ENEMY</div>
+            <div className="enemy-name">{enemy.def.name}</div>
+          </div>
+          <div className="intent">予告: {intentText(combat)}</div>
+        </div>
         <Bar hp={enemy.hp} max={enemy.maxHp} />
-        <div className="status">{enemy.block > 0 ? `🛡 ${enemy.block}　` : ''}{statusLine(enemy.status)}</div>
-      </div>
+        <div className="status">{enemy.block > 0 ? `ブロック ${enemy.block} / ` : ''}{statusLine(enemy.status)}</div>
+      </section>
 
-      <div className={`player-area${playerFx.shake ? ' shake' : ''}`}>
-        {playerFx.pop && <span key={playerFx.pop.key} className="dmg-pop">{playerFx.pop.delta}</span>}
-        <Bar hp={player.hp} max={player.maxHp} />
-        <div className="status">{player.block > 0 ? `🛡 ${player.block}　` : ''}{statusLine(player.status)}</div>
+      <section className={`player-console${playerFx.shake ? ' shake' : ''}`}>
+        {playerFx.pop && <span key={playerFx.pop.key} className="dmg-pop player-pop">{playerFx.pop.delta}</span>}
+        <div className="player-readout">
+          <div className="player-label">PLAYER</div>
+          <Bar hp={player.hp} max={player.maxHp} />
+          <div className="status">{player.block > 0 ? `ブロック ${player.block} / ` : ''}{statusLine(player.status)}</div>
+        </div>
         <div className="resources">
-          <span className="energy">⚡ {player.energy}/{player.maxEnergy}</span>
+          <span className="energy">{player.energy}/{player.maxEnergy}</span>
           <button className="btn" onClick={onOpenDeck}>デッキ</button>
           <button className="btn end-turn" onClick={onEndTurn}>ターン終了</button>
         </div>
-      </div>
+      </section>
 
       <div className="hand">
         {hand.map((id, i) => {

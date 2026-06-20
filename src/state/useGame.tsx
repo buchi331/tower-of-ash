@@ -4,7 +4,7 @@ import { makeRng, type RNG } from '../engine/rng'
 import { createCombat, playCard as enginePlayCard, endTurn as engineEndTurn } from '../engine/combat'
 import {
   startRun, currentFloor, isBossFloor, rewardOptions, addCardToDeck, advanceFloor, recordVictory, recordDefeat,
-  addRelic, relicRewardOptions, postCombatHealAmount, healPlayer,
+  addRelic, relicRewardOptions, postCombatHealAmount, healPlayer, maxHpPerWinAmount,
 } from '../engine/run'
 import { CARDS } from '../content/cards'
 import { ENEMIES } from '../content/enemies'
@@ -74,6 +74,8 @@ export function useGame(): GameApi {
   const finishCombat = useCallback((c: CombatState, r: RunState) => {
     if (c.phase === 'won') {
       let updated: RunState = { ...r, playerHp: c.player.hp }
+      const grow = maxHpPerWinAmount(updated)
+      if (grow > 0) updated = { ...updated, maxHp: updated.maxHp + grow, playerHp: updated.playerHp + grow }
       updated = healPlayer(updated, postCombatHealAmount(updated))
       if (isBossFloor(updated)) {
         const won = recordVictory(updated)

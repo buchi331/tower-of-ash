@@ -77,3 +77,10 @@ export function postCombatHealAmount(run: RunState): number {
     return sum + (r && r.kind === 'postCombatHeal' ? r.value : 0)
   }, 0)
 }
+
+export function maxHpPerWinAmount(run: RunState): number {
+  return run.relics.reduce((sum, id) => {
+    const r = RELICS[id]
+    return sum + (r && r.kind === 'maxHpPerWin' ? r.value : 0)
+  }, 0)
+}

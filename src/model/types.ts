@@ -99,6 +99,7 @@ export interface RunState {
 export type RelicKind =
   | 'startBlock' | 'startStrength' | 'extraDraw' | 'firstAttackBonus'
   | 'blockThorns' | 'poisonPlus' | 'maxHpUp' | 'postCombatHeal'
+  | 'startEnergy' | 'maxHpPerWin' | 'startPoison'
 
 export interface RelicDef {
   id: string
@@ -115,4 +116,6 @@ export interface RelicBonuses {
   firstAttackBonus: number
   blockThorns: number
   poisonPlus: number
+  startEnergy: number
+  startPoison: number
 }

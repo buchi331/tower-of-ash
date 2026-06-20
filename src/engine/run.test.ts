@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { makeRng } from './rng'
 import {
   startRun, isBossFloor, rewardOptions, addCardToDeck, advanceFloor, recordVictory, recordDefeat, START_HP,
-  addRelic, relicRewardOptions, postCombatHealAmount,
+  addRelic, relicRewardOptions, postCombatHealAmount, maxHpPerWinAmount,
 } from './run'
 import { STARTER_DECK } from '../content/cards'
 import { RELICS } from '../content/relics'
@@ -61,13 +61,18 @@ describe('run — relics', () => {
     expect(r.playerHp).toBe(START_HP + 15)
   })
   it('relicRewardOptions excludes already-owned relics', () => {
-    const r = { ...startRun(1), relics: Object.keys(RELICS).slice(0, 6) }
+    // own all but 2 relics to force a pool smaller than 3
+    const r = { ...startRun(1), relics: Object.keys(RELICS).slice(0, Object.keys(RELICS).length - 2) }
     const opts = relicRewardOptions(r, makeRng(3))
-    expect(opts.length).toBe(2) // only 2 remain
+    expect(opts.length).toBe(2) // only 2 remain in pool
     for (const id of opts) expect(r.relics).not.toContain(id)
   })
   it('postCombatHealAmount sums postCombatHeal relics', () => {
     const r = { ...startRun(1), relics: ['lifecharm'] }
     expect(postCombatHealAmount(r)).toBe(6)
+  })
+  it('maxHpPerWinAmount sums maxHpPerWin relics', () => {
+    const r = { ...startRun(1), relics: ['bloodpact'] }
+    expect(maxHpPerWinAmount(r)).toBe(3)
   })
 })

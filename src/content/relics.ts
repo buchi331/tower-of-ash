@@ -9,6 +9,9 @@ export const RELICS: Record<string, RelicDef> = {
   poisonvial: { id: 'poisonvial', name: '毒の小瓶', text: '敵に毒を与えるたび、毒+1。', kind: 'poisonPlus', value: 1 },
   giantblood: { id: 'giantblood', name: '巨人の血', text: '取得時、最大HP+15。', kind: 'maxHpUp', value: 15 },
   lifecharm:  { id: 'lifecharm', name: '命の護符', text: '戦闘に勝つたび、HP+6回復。', kind: 'postCombatHeal', value: 6 },
+  swiftboots: { id: 'swiftboots', name: '俊足の靴', text: '各戦闘の最初のターン、エネルギー+1。', kind: 'startEnergy', value: 1 },
+  bloodpact:  { id: 'bloodpact', name: '血の契約', text: '戦闘に勝つたび、最大HP+3。', kind: 'maxHpPerWin', value: 3 },
+  venomheart: { id: 'venomheart', name: '毒の心臓', text: '戦闘開始時、敵に毒3。', kind: 'startPoison', value: 3 },
 }
 
 export const RELIC_POOL: string[] = Object.keys(RELICS)

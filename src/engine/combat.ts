@@ -11,7 +11,7 @@ function emptyStatus(): StatusEffects {
 }
 
 function emptyBonuses(): RelicBonuses {
-  return { startBlock: 0, startStrength: 0, extraDraw: 0, firstAttackBonus: 0, blockThorns: 0, poisonPlus: 0 }
+  return { startBlock: 0, startStrength: 0, extraDraw: 0, firstAttackBonus: 0, blockThorns: 0, poisonPlus: 0, startEnergy: 0, startPoison: 0 }
 }
 
 function computeBonuses(relics: RelicDef[]): RelicBonuses {
@@ -24,7 +24,9 @@ function computeBonuses(relics: RelicDef[]): RelicBonuses {
       case 'firstAttackBonus': b.firstAttackBonus += r.value; break
       case 'blockThorns': b.blockThorns += r.value; break
       case 'poisonPlus': b.poisonPlus += r.value; break
-      // maxHpUp, postCombatHeal handled at run level
+      case 'startEnergy': b.startEnergy += r.value; break
+      case 'startPoison': b.startPoison += r.value; break
+      // maxHpUp, postCombatHeal, maxHpPerWin handled at run level
     }
   }
   return b
@@ -82,6 +84,8 @@ export function createCombat(
   s.player.status.strength += bonuses.startStrength
   startPlayerTurn(s, rng)
   s.player.block += bonuses.startBlock
+  s.player.energy += bonuses.startEnergy
+  s.enemy.status.poison += bonuses.startPoison
   return s
 }
 

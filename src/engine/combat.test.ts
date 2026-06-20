@@ -335,6 +335,20 @@ describe('combat — new effects', () => {
   })
 })
 
+const deck5strike = ['strike','strike','strike','strike','strike'] as const
+
+describe('combat — relics (new hooks)', () => {
+  it('startEnergy grants +1 energy on turn 1', () => {
+    const s = createCombat(DUMMY, deck5strike, 70, 70, makeRng(1), TEST_CARDS, [relic('startEnergy', 1)])
+    expect(s.player.energy).toBe(4)
+  })
+
+  it('startPoison applies poison to the enemy at combat start', () => {
+    const s = createCombat(DUMMY, deck5strike, 70, 70, makeRng(1), TEST_CARDS, [relic('startPoison', 3)])
+    expect(s.enemy.status.poison).toBe(3)
+  })
+})
+
 describe('content — new cards present in CARDS and REWARD_POOL', () => {
   const NEW_IDS = ['weaken', 'venommist', 'flurry', 'riposte', 'conflagration', 'channel', 'corrode']
 

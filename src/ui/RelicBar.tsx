@@ -1,4 +1,5 @@
 import type { RunState } from '../model/types'
+import { getRelicArt } from '../assets/relicArt'
 import { RELICS } from '../content/relics'
 
 export function RelicBar({ run }: { run: RunState }) {
@@ -8,7 +9,13 @@ export function RelicBar({ run }: { run: RunState }) {
       {run.relics.map((id, i) => {
         const r = RELICS[id]
         if (!r) return null
-        return <span key={`${id}-${i}`} className="relic-chip" title={r.text}>{r.name}</span>
+        const art = getRelicArt(id)
+        return (
+          <span key={`${id}-${i}`} className="relic-chip" title={r.text}>
+            {art && <img className="relic-chip-art" src={art} alt="" aria-hidden="true" />}
+            {r.name}
+          </span>
+        )
       })}
     </div>
   )

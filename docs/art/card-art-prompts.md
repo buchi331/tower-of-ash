@@ -48,6 +48,45 @@ Preserved from the earlier draft for later batches.
 | `poisonmastery` | `biohazard` | Power: apply Poison 1 on each attack. | A swirling toxic sigil of three coiled serpents forming a venom emblem, dripping green ichor, arcane poison mastery, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/biohazard.webp` | queued |
 | `adrenaline` | `run` | Draw 2 cards and gain 1 energy. | A blurred surge of forward motion, streaking speed lines and a burst of blue-white energy, momentum and quickness, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/run.webp` | queued |
 
+## Remaining Prompts
+
+Completes coverage so every card in `src/content/cards.ts` has a prompt and a target filename. Same seam: `CardDef.art` key → `src/assets/art/cards/<artKey>.webp`.
+
+| Card id | Art key | Effect summary | Image prompt | Generated/target filename | Status |
+|---|---|---|---|---|---|
+| `weaken` | `down` | Apply Weak 2 to enemy. | A downward-curling wisp of cold blue-gray vapor sapping a faint armored silhouette, drooping and drained, weakening hex, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/down.webp` | queued |
+| `venommist` | `cloud` | Apply Poison 6. | A rolling low cloud of sickly green venom mist creeping forward, faint toxic droplets suspended in the haze, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/cloud.webp` | queued |
+| `flurry` | `arrows` | Deal 2 damage three times. | Three crimson-tipped thrusting strikes fanning out in rapid succession, motion streaks and ember sparks, fast multi-hit, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/arrows.webp` | queued |
+| `riposte` | `parry` | Gain 6 block and deal 5 damage. | A blade turning aside an incoming strike with a bright steel-blue spark at the parry point, instantly counter-cutting, poised defense-into-attack, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/parry.webp` | queued |
+| `conflagration` | `fire-burst` | Deal 11 damage and apply Vulnerable 1. | A blooming burst of crimson conflagration erupting outward in a ring of fire and flying embers, searing and exposing, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/fire-burst.webp` | queued |
+| `channel` | `spiral` | Gain Strength 1 and draw 1 card. | A tight inward arcane violet spiral of channeled energy drawing power to a glowing core, focused breath of mana, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/spiral.webp` | queued |
+| `corrode` | `acid` | Deal damage equal to enemy Poison. | A blade dissolving in dripping violet-green acid, corroded pitted steel with hissing fumes, poison-fueled decay, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/acid.webp` | queued |
+
+### Prose prompts — Remaining
+
+**17. down.webp — 衰え / Weaken (skill)**
+> A downward-curling wisp of cold blue-gray vapor draining a faint armored silhouette, drooping and sapped of strength. [shared visual direction]
+
+**18. cloud.webp — 毒霧 / Venom Mist (skill · poison)**
+> A rolling low bank of sickly green venom mist creeping forward, toxic droplets suspended in the haze. [shared visual direction]
+
+**19. arrows.webp — 乱れ突き / Flurry (attack)**
+> Three crimson-tipped thrusts fanning out in rapid succession, motion streaks and ember sparks, a fast multi-hit. [shared visual direction]
+
+**20. parry.webp — 受け流し / Riposte (skill)**
+> A blade turning aside an incoming strike with a bright steel-blue spark at the parry point, poised to counter-cut. [shared visual direction]
+
+**21. fire-burst.webp — 業火 / Conflagration (attack)**
+> A blooming burst of crimson fire erupting outward in a ring of embers, searing and exposing the target. [shared visual direction]
+
+**22. spiral.webp — 練気 / Channel (skill)**
+> A tight inward arcane-violet spiral of channeled energy drawing power to a glowing core, a focused breath of mana. [shared visual direction]
+
+**23. acid.webp — 腐食 / Corrode (attack · poison)**
+> A blade dissolving in dripping violet-green acid, corroded pitted steel with hissing fumes. [shared visual direction]
+
+---
+
 ## Later Milestones
 
 - Enemy portraits: skeleton, bats, mud golem, ghoul, wraith, curse mage, armored sentinel, Ash King boss.

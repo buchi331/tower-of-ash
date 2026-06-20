@@ -151,8 +151,39 @@ Completes coverage so every card in `src/content/cards.ts` has a prompt and a ta
 
 ---
 
-## Later milestones (out of scope for batch 1, prompts on request)
-- **Enemy portraits** (`骸骨剣士` skeleton, `蝙蝠群` bats, `泥人形` mud golem, `屍喰い` ghoul, `影` wraith, `呪術師` curse mage, `鎧の番人` armored sentinel, `灰の王` Ash King boss) — wider, scene-ish framing.
-- **Relic icons** (古びた盾 / 猛りの種火 / 砂のローブ / 怒りの拳 / 棘の革鎧 / 毒の小瓶 / 巨人の血 / 命の護符) — small emblem style.
+## Enemy Portraits
 
-Ping me (Claude) and I'll add these rows + prompts.
+Seam: `EnemyDef.id` (or optional `EnemyDef.art`) → `src/assets/art/enemies/<id>.webp`. Auto-registered by `src/assets/enemyArt.ts`; rendered in the enemy panel (`CombatScreen`) at 96px square, so favor a strong centered portrait. Framing is slightly more scene-ish than cards but still iconic and readable small.
+
+> Shared direction (append to each): dark fantasy painterly portrait, single menacing subject centered, strong silhouette, dramatic rim lighting, restrained smoky background, high contrast so it reads at ~96px, square 1:1, no text, no frame, no border.
+
+| Enemy id | Name | Image prompt | Target filename | Status |
+|---|---|---|---|---|
+| `skeleton` | 骸骨剣士 | A gaunt skeletal swordsman in rusted plate, hollow eye-sockets lit by faint ember light, raising a notched blade. | `src/assets/art/enemies/skeleton.webp` | queued |
+| `bats` | 蝙蝠群 | A roiling swarm of small leather-winged bats converging out of the dark, red pinprick eyes, chaotic motion. | `src/assets/art/enemies/bats.webp` | queued |
+| `golem` | 泥人形 | A hulking mud-and-clay golem with cracked earthen body, slow and heavy, glistening wet sludge dripping from its fists. | `src/assets/art/enemies/golem.webp` | queued |
+| `ghoul` | 屍喰い | A hunched corpse-eating ghoul with gaunt grey flesh and long claws, sickly green miasma clinging to its jaw. | `src/assets/art/enemies/ghoul.webp` | queued |
+| `wraith` | 影 | A shrouded shadow-wraith of tattered black mist, faint pale face barely visible, cold and silent. | `src/assets/art/enemies/wraith.webp` | queued |
+| `cursemage` | 呪術師 | A robed curse-mage tracing a glowing violet hex-sigil in the air, hood shadowing the face, arcane menace. | `src/assets/art/enemies/cursemage.webp` | queued |
+| `sentinel` | 鎧の番人 | A towering armored sentinel of blackened iron plate with a tower shield, immovable guardian, cold blue glint. | `src/assets/art/enemies/sentinel.webp` | queued |
+| `ashking` | 灰の王 | The Ash King: a crowned skeletal monarch wreathed in drifting embers and ash, robes of smoldering cinder, throne-born dread, boss presence. | `src/assets/art/enemies/ashking.webp` | queued |
+
+## Relic Icons
+
+Seam: `RelicDef.id` (or optional `RelicDef.art`) → `src/assets/art/relics/<id>.webp`. Auto-registered by `src/assets/relicArt.ts`; rendered at 44px in the reward screen and 14px in the relic bar, so use a **simple, high-contrast emblem** with a clear single object that reads tiny.
+
+> Shared direction (append to each): dark fantasy relic emblem, single object centered, simple iconic shape, gold-and-ember accents on dark background, strong silhouette, high contrast so it reads at ~14px, square 1:1, no text, no frame, no border.
+
+| Relic id | Name | Effect | Image prompt | Target filename | Status |
+|---|---|---|---|---|---|
+| `oldshield` | 古びた盾 | Start combat with 8 block. | A worn round wooden shield with a cracked iron boss, faint protective glow. | `src/assets/art/relics/oldshield.webp` | queued |
+| `ember` | 猛りの種火 | Start combat with Strength 1. | A single glowing ember-seed cupped in darkness, radiating warm crimson light. | `src/assets/art/relics/ember.webp` | queued |
+| `sandrobe` | 砂のローブ | Draw +1 card each turn. | A flowing tattered sand-colored robe caught in wind, fine dust streaming off the hem. | `src/assets/art/relics/sandrobe.webp` | queued |
+| `ragefist` | 怒りの拳 | First attack each turn deals +3. | A clenched gauntleted fist wreathed in crimson fury, knuckles sparking. | `src/assets/art/relics/ragefist.webp` | queued |
+| `thornmail` | 棘の革鎧 | Gaining block deals 2 to enemy. | A spiked leather cuirass bristling with iron thorns, defensive and cruel. | `src/assets/art/relics/thornmail.webp` | queued |
+| `poisonvial` | 毒の小瓶 | Applying poison adds +1. | A small corked vial of bubbling sickly-green poison, faint toxic vapor escaping. | `src/assets/art/relics/poisonvial.webp` | queued |
+| `giantblood` | 巨人の血 | On pickup, max HP +15. | A heavy crimson droplet of giant's blood suspended mid-fall, thick and luminous. | `src/assets/art/relics/giantblood.webp` | queued |
+| `lifecharm` | 命の護符 | Heal 6 after each win. | A small carved life-charm amulet on a cord, soft healing green glow at its heart. | `src/assets/art/relics/lifecharm.webp` | queued |
+| `swiftboots` | 俊足の靴 | First turn each combat, energy +1. | A pair of light worn travel boots with faint blue motion-streaks, quickness. | `src/assets/art/relics/swiftboots.webp` | queued |
+| `bloodpact` | 血の契約 | Each win, max HP +3. | A torn blood-signed pact parchment with a crimson handprint seal, ominous. | `src/assets/art/relics/bloodpact.webp` | queued |
+| `venomheart` | 毒の心臓 | Start combat: enemy Poison 3. | A pulsing dark heart leaking sickly-green venom through its veins. | `src/assets/art/relics/venomheart.webp` | queued |

@@ -1,6 +1,7 @@
 import type { CombatState } from '../model/types'
 import { currentIntent } from '../engine/combat'
 import { CARDS } from '../content/cards'
+import { getEnemyArt } from '../assets/enemyArt'
 import { Card } from './Card'
 import { useHitFeedback } from './useHitFeedback'
 
@@ -41,10 +42,12 @@ export function CombatScreen({ combat, onPlay, onEndTurn, onOpenDeck }: {
   const { player, enemy, hand } = combat
   const enemyFx = useHitFeedback(enemy.hp)
   const playerFx = useHitFeedback(player.hp)
+  const enemyArt = getEnemyArt(enemy.def.art ?? enemy.def.id)
   return (
     <div className="combat">
       <div className={`enemy-area${enemyFx.shake ? ' shake' : ''}`}>
         {enemyFx.pop && <span key={enemyFx.pop.key} className="dmg-pop">{enemyFx.pop.delta}</span>}
+        {enemyArt && <img className="enemy-portrait" src={enemyArt} alt="" draggable={false} />}
         <div className="enemy-name">{enemy.def.name}</div>
         <div className="intent">予告: {intentText(combat)}</div>
         <Bar hp={enemy.hp} max={enemy.maxHp} />

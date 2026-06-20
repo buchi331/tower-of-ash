@@ -43,6 +43,8 @@ export interface EnemyDef {
   name: string
   maxHp: number
   intentPattern: IntentStep[]
+  /** Portrait asset key; defaults to `id` when omitted. */
+  art?: string
 }
 
 export interface CombatantState {
@@ -107,6 +109,8 @@ export interface RelicDef {
   text: string
   kind: RelicKind
   value: number
+  /** Icon asset key; defaults to `id` when omitted. */
+  art?: string
 }
 
 export interface RelicBonuses {

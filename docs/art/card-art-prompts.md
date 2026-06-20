@@ -18,26 +18,41 @@ Final format: **WebP**, square. PNG ok for drafts. Missing art must fall back gr
 
 ---
 
-## Tracking table
+## First Batch
 
-| # | card id | art key | 名前 | effect (EN, encoding-proof) | filename | status |
-|---|---------|---------|------|------------------------------|----------|--------|
-| 1 | strike | sword | 斬撃 | Deal 6 damage | `sword.webp` | batch1 · prompt ready |
-| 2 | defend | shield | 守勢 | Gain 5 block | `shield.webp` | batch1 · prompt ready |
-| 3 | bash | hammer | 痛打 | Deal 8, apply Vulnerable 2 | `hammer.webp` | batch1 · prompt ready |
-| 4 | twinslash | swords | 連刃 | Deal 3 twice | `swords.webp` | batch1 · prompt ready |
-| 5 | heavy | axe | 重撃 | Deal 14 | `axe.webp` | batch1 · prompt ready |
-| 6 | poisonblade | flask | 毒刃 | Deal 5, apply Poison 3 | `flask.webp` | batch1 · prompt ready |
-| 7 | allout | flame | 渾身 | Deal 22 | `flame.webp` | batch1 · prompt ready |
-| 8 | insight | eye | 見極め | Draw 2 cards | `eye.webp` | batch1 · prompt ready |
-| 9 | lifesteal | droplet | 吸血 | Deal 8, heal 4 | `droplet.webp` | queued · prompt ready |
-| 10 | reckless | skull | 捨て身 | Deal 10, lose 3 HP | `skull.webp` | queued · prompt ready |
-| 11 | shieldbash | shield-bolt | 盾打ち | Deal damage equal to current block | `shield-bolt.webp` | queued · prompt ready |
-| 12 | ironwall | wall | 鉄壁 | Gain 12 block | `wall.webp` | queued · prompt ready |
-| 13 | focus | up | 集中 | Gain Strength 2 | `up.webp` | queued · prompt ready |
-| 14 | inflame | bolt | 鍛錬 | Power: Strength +3 | `bolt.webp` | queued · prompt ready |
-| 15 | poisonmastery | biohazard | 毒の心得 | Power: apply Poison 1 on each attack | `biohazard.webp` | queued · prompt ready |
-| 16 | adrenaline | run | 戦機 | Draw 2, gain 1 energy | `run.webp` | queued · prompt ready |
+Stable Claude/Codex handoff table for the first batch only.
+
+| Card id | Art key | Effect summary | Image prompt | Generated/target filename | Status |
+|---|---|---|---|---|---|
+| `strike` | `sword` | Deal 6 damage. | A single worn iron sword cutting through ash-dark air, bright ember sparks at the blade edge, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/sword.webp` | placeholder svg present |
+| `defend` | `shield` | Gain 5 block. | A battered round shield catching a heavy blow, blue-gray defensive glow, ash and dust around the rim, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/shield.webp` | placeholder svg present |
+| `bash` | `hammer` | Deal 8 damage and apply Vulnerable 2. | A brutal war hammer descending with cracked golden impact light, enemy armor implied but not detailed, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/hammer.webp` | placeholder svg present |
+| `twinslash` | `swords` | Deal 3 damage twice. | Two crossing blades leaving twin red-orange arcs in smoky darkness, fast motion and clean readable shapes, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/swords.webp` | placeholder svg present |
+| `heavy` | `axe` | Deal 14 damage. | A heavy execution axe embedded in cracked black stone, glowing embers in the split, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/axe.webp` | placeholder svg present |
+| `poisonblade` | `flask` | Deal 5 damage and apply Poison 3. | A poisoned dagger beside a small green vial, sickly vapor curling upward, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/flask.webp` | placeholder svg present |
+| `allout` | `flame` | Deal 22 damage. | A violent burst of crimson flame shaped like a final reckless strike, ash fragments flying outward, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/flame.webp` | placeholder svg present |
+| `insight` | `eye` | Draw 2 cards. | A luminous eye opening inside a ring of ash and pale blue light, mysterious but readable at small size, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/eye.webp` | placeholder svg present |
+
+## Queued Prompts
+
+Preserved from the earlier draft for later batches.
+
+| Card id | Art key | Effect summary | Image prompt | Generated/target filename | Status |
+|---|---|---|---|---|---|
+| `lifesteal` | `droplet` | Deal 8 damage and heal 4. | A dark blade slick with blood, crimson droplets lifting upward off the steel into a faint vampiric red mist, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/droplet.webp` | queued |
+| `reckless` | `skull` | Deal 10 damage and lose 3 HP. | A grinning cracked skull pierced on a jagged blade, reckless self-sacrifice, dim red embers glowing in the eye sockets, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/skull.webp` | queued |
+| `shieldbash` | `shield-bolt` | Deal damage equal to current block. | A heavy round shield thrust forward edge-first as a weapon, a bright impact shock-bolt flashing across its central boss, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/shield-bolt.webp` | queued |
+| `ironwall` | `wall` | Gain 12 block. | A colossal interlocked stone-and-iron fortress wall filling the frame, impenetrable, deep cold-blue shadow, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/wall.webp` | queued |
+| `focus` | `up` | Gain Strength 2. | An upward surge of pale arcane energy converging to a single point, focused concentration, faint violet glow, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/up.webp` | queued |
+| `inflame` | `bolt` | Power: Strength +3. | A clenched armored fist crackling with violet forge sparks, raw empowering strength, a glowing rune etched on the gauntlet, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/bolt.webp` | queued |
+| `poisonmastery` | `biohazard` | Power: apply Poison 1 on each attack. | A swirling toxic sigil of three coiled serpents forming a venom emblem, dripping green ichor, arcane poison mastery, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/biohazard.webp` | queued |
+| `adrenaline` | `run` | Draw 2 cards and gain 1 energy. | A blurred surge of forward motion, streaking speed lines and a burst of blue-white energy, momentum and quickness, compact dark fantasy spot illustration, strong silhouette, restrained background, no text. | `src/assets/art/cards/run.webp` | queued |
+
+## Later Milestones
+
+- Enemy portraits: skeleton, bats, mud golem, ghoul, wraith, curse mage, armored sentinel, Ash King boss.
+- Relic icons: sealed pebble, pocket charm, torn scroll, burned ring, eye sigil, poison vial, iron mask, cracked crown.
+- Add those rows and prompts when the project reaches the next batch.
 
 ---
 

@@ -1,9 +1,10 @@
-import type { RunState, Floor } from '../model/types'
+import type { RunState, Floor, RelicDef } from '../model/types'
 import { STARTER_DECK, REWARD_POOL } from '../content/cards'
 import { TOWER } from '../content/tower'
 import type { RNG } from './rng'
+import { RELICS, RELIC_POOL } from '../content/relics'
 
-export const SCHEMA_VERSION = 1
+export const SCHEMA_VERSION = 2
 export const START_HP = 70
 const ELITE_HEAL_PCT = 0.25
 
@@ -53,4 +54,26 @@ export function recordVictory(run: RunState): RunState {
 
 export function recordDefeat(run: RunState): RunState {
   return { ...run, status: 'lost' }
+}
+
+export function addRelic(run: RunState, relic: RelicDef): RunState {
+  const relics = [...run.relics, relic.id]
+  if (relic.kind === 'maxHpUp') {
+    return { ...run, relics, maxHp: run.maxHp + relic.value, playerHp: run.playerHp + relic.value }
+  }
+  return { ...run, relics }
+}
+
+export function relicRewardOptions(run: RunState, rng: RNG): string[] {
+  const pool = RELIC_POOL.filter((id) => !run.relics.includes(id))
+  const out: string[] = []
+  for (let i = 0; i < 3 && pool.length > 0; i++) out.push(pool.splice(rng.int(pool.length), 1)[0])
+  return out
+}
+
+export function postCombatHealAmount(run: RunState): number {
+  return run.relics.reduce((sum, id) => {
+    const r = RELICS[id]
+    return sum + (r && r.kind === 'postCombatHeal' ? r.value : 0)
+  }, 0)
 }

@@ -4,24 +4,28 @@ import { makeRng, type RNG } from '../engine/rng'
 import { createCombat, playCard as enginePlayCard, endTurn as engineEndTurn } from '../engine/combat'
 import {
   startRun, currentFloor, isBossFloor, rewardOptions, addCardToDeck, advanceFloor, recordVictory, recordDefeat,
+  addRelic, relicRewardOptions, postCombatHealAmount, healPlayer,
 } from '../engine/run'
 import { CARDS } from '../content/cards'
 import { ENEMIES } from '../content/enemies'
+import { RELICS } from '../content/relics'
 import { saveRun, loadRun, clearRun } from './persistence'
 
-export type Screen = 'title' | 'combat' | 'reward' | 'win' | 'lose' | 'deck'
+export type Screen = 'title' | 'combat' | 'reward' | 'relicReward' | 'win' | 'lose' | 'deck'
 
 export interface GameApi {
   screen: Screen
   run: RunState | null
   combat: CombatState | null
   rewards: string[]
+  relicRewards: string[]
   hasSave: boolean
   newRun: () => void
   continueRun: () => void
   play: (handIndex: number) => void
   endTurn: () => void
   chooseReward: (cardId: string | null) => void
+  chooseRelic: (relicId: string | null) => void
   openDeck: () => void
   closeDeck: () => void
   backToTitle: () => void
@@ -37,13 +41,15 @@ export function useGame(): GameApi {
   const [run, setRun] = useState<RunState | null>(null)
   const [combat, setCombat] = useState<CombatState | null>(null)
   const [rewards, setRewards] = useState<string[]>([])
+  const [relicRewards, setRelicRewards] = useState<string[]>([])
   const [hasSave, setHasSave] = useState<boolean>(() => loadRun() !== null)
   const prevScreen = useRef<Screen>('title')
   const rng = useRef<RNG>(makeRng(seedNow()))
 
   const beginCombat = useCallback((r: RunState) => {
     const enemy = ENEMIES[currentFloor(r).enemyId]
-    setCombat(createCombat(enemy, r.deck, r.playerHp, r.maxHp, rng.current, CARDS))
+    const owned = r.relics.map((id) => RELICS[id]).filter(Boolean) as import('../model/types').RelicDef[]
+    setCombat(createCombat(enemy, r.deck, r.playerHp, r.maxHp, rng.current, CARDS, owned))
     setScreen('combat')
   }, [])
 
@@ -67,10 +73,13 @@ export function useGame(): GameApi {
   // Called once when combat reaches a terminal phase. Top-level setters only (no nested setState).
   const finishCombat = useCallback((c: CombatState, r: RunState) => {
     if (c.phase === 'won') {
-      const updated: RunState = { ...r, playerHp: c.player.hp }
+      let updated: RunState = { ...r, playerHp: c.player.hp }
+      updated = healPlayer(updated, postCombatHealAmount(updated))
       if (isBossFloor(updated)) {
         const won = recordVictory(updated)
         setRun(won); clearRun(); setHasSave(false); setScreen('win')
+      } else if (currentFloor(updated).kind === 'elite') {
+        setRun(updated); saveRun(updated); setRelicRewards(relicRewardOptions(updated, rng.current)); setScreen('relicReward')
       } else {
         setRun(updated); saveRun(updated); setRewards(rewardOptions(rng.current)); setScreen('reward')
       }
@@ -102,12 +111,22 @@ export function useGame(): GameApi {
     beginCombat(r)
   }, [run, beginCombat])
 
+  const chooseRelic = useCallback((relicId: string | null) => {
+    if (!run) return
+    let r = run
+    const relic = relicId ? RELICS[relicId] : null
+    if (relic) r = addRelic(r, relic)
+    r = advanceFloor(r)
+    setRun(r); saveRun(r)
+    beginCombat(r)
+  }, [run, beginCombat])
+
   const openDeck = useCallback(() => { prevScreen.current = screen; setScreen('deck') }, [screen])
   const closeDeck = useCallback(() => setScreen(prevScreen.current), [])
   const backToTitle = useCallback(() => { setScreen('title'); setHasSave(loadRun() !== null) }, [])
 
   return {
-    screen, run, combat, rewards, hasSave,
-    newRun, continueRun, play, endTurn, chooseReward, openDeck, closeDeck, backToTitle,
+    screen, run, combat, rewards, relicRewards, hasSave,
+    newRun, continueRun, play, endTurn, chooseReward, chooseRelic, openDeck, closeDeck, backToTitle,
   }
 }

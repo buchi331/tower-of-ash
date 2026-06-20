@@ -12,6 +12,7 @@ vite.config.d.ts
 
 # local tooling
 .claude/
+.worktrees/
 
 # logs
 *.log

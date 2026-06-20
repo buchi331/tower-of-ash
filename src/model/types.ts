@@ -55,6 +55,8 @@ export interface PlayerCombatState extends CombatantState {
   energy: number
   maxEnergy: number
   poisonOnAttack: number
+  bonuses: RelicBonuses
+  firstAttackDone: boolean
 }
 
 export interface EnemyCombatState extends CombatantState {
@@ -90,4 +92,26 @@ export interface RunState {
   playerHp: number
   maxHp: number
   status: RunStatus
+  relics: string[]
+}
+
+export type RelicKind =
+  | 'startBlock' | 'startStrength' | 'extraDraw' | 'firstAttackBonus'
+  | 'blockThorns' | 'poisonPlus' | 'maxHpUp' | 'postCombatHeal'
+
+export interface RelicDef {
+  id: string
+  name: string
+  text: string
+  kind: RelicKind
+  value: number
+}
+
+export interface RelicBonuses {
+  startBlock: number
+  startStrength: number
+  extraDraw: number
+  firstAttackBonus: number
+  blockThorns: number
+  poisonPlus: number
 }

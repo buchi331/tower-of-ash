@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { makeRng } from './rng'
 import { createCombat, playCard, endTurn, currentIntent } from './combat'
-import type { CardDef, EnemyDef } from '../model/types'
+import type { CardDef, EnemyDef, RelicDef } from '../model/types'
 
 // minimal test fixtures (independent of real content)
 export const TEST_CARDS: Record<string, CardDef> = {
@@ -252,5 +252,57 @@ describe('combat — coverage', () => {
     s = playCard(s, s.hand.indexOf('suicide'), makeRng(1), cards)
     expect(s.player.hp).toBeLessThanOrEqual(0)
     expect(s.phase).toBe('lost')
+  })
+})
+
+const relic = (kind: RelicDef['kind'], value: number): RelicDef =>
+  ({ id: kind, name: kind, text: '', kind, value })
+
+describe('combat — relics', () => {
+  it('startBlock grants block on turn 1', () => {
+    const s = createCombat(DUMMY, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS, [relic('startBlock', 8)])
+    expect(s.player.block).toBe(8)
+  })
+
+  it('startStrength boosts attacks from turn 1', () => {
+    let s = createCombat(DUMMY, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS, [relic('startStrength', 2)])
+    const before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('strike'), makeRng(1), TEST_CARDS)
+    expect(s.enemy.hp).toBe(before - 8) // 6 + 2
+  })
+
+  it('extraDraw increases the opening hand', () => {
+    const s = createCombat(DUMMY, ['strike','strike','strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS, [relic('extraDraw', 1)])
+    expect(s.hand.length).toBe(6)
+  })
+
+  it('firstAttackBonus adds damage to the first attack only', () => {
+    let s = createCombat(DUMMY, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS, [relic('firstAttackBonus', 3)])
+    let before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('strike'), makeRng(1), TEST_CARDS)
+    expect(s.enemy.hp).toBe(before - 9) // 6 + 3
+    before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('strike'), makeRng(1), TEST_CARDS)
+    expect(s.enemy.hp).toBe(before - 6) // second attack: no bonus
+  })
+
+  it('blockThorns damages the enemy when block is gained', () => {
+    let s = createCombat(DUMMY, ['defend','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS, [relic('blockThorns', 2)])
+    const before = s.enemy.hp
+    s = playCard(s, s.hand.indexOf('defend'), makeRng(1), TEST_CARDS)
+    expect(s.enemy.hp).toBe(before - 2)
+  })
+
+  it('poisonPlus adds to poison applied to the enemy', () => {
+    const cards = { ...TEST_CARDS, pb: { ...TEST_CARDS.strike, id: 'pb', cost: 0, effects: [{ kind: 'applyStatus' as const, status: 'poison' as const, amount: 3, target: 'enemy' as const }] } }
+    let s = createCombat(DUMMY, ['pb','strike','strike','strike','strike'], 70, 70, makeRng(1), cards, [relic('poisonPlus', 1)])
+    s = playCard(s, s.hand.indexOf('pb'), makeRng(1), cards)
+    expect(s.enemy.status.poison).toBe(4) // 3 + 1
+  })
+
+  it('no relics → opening hand of 5 and no block (regression)', () => {
+    const s = createCombat(DUMMY, ['strike','strike','strike','strike','strike'], 70, 70, makeRng(1), TEST_CARDS)
+    expect(s.hand.length).toBe(5)
+    expect(s.player.block).toBe(0)
   })
 })

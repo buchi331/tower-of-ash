@@ -11,6 +11,7 @@ export function startRun(seed: number): RunState {
   return {
     schemaVersion: SCHEMA_VERSION, seed, floor: 0,
     deck: [...STARTER_DECK], playerHp: START_HP, maxHp: START_HP, status: 'inProgress',
+    relics: [],
   }
 }
 

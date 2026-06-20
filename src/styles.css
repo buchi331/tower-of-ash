@@ -9,7 +9,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 
 .combat { display: flex; flex-direction: column; flex: 1; padding: 12px; gap: 12px; }
 .enemy-area { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
-.enemy-art { width: min(100%, 300px); aspect-ratio: 16 / 9; object-fit: cover; display: block; margin: 0 auto 10px;
+.enemy-art { width: min(100%, 260px); aspect-ratio: 1 / 1; object-fit: contain; display: block; margin: 0 auto 10px;
   border: 1px solid rgba(236,233,255,.16); border-radius: 8px; background: #090711; }
 .enemy-name { font-size: 20px; font-weight: 600; }
 .intent { color: var(--gold); margin: 6px 0; font-size: 14px; }

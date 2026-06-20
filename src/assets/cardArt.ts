@@ -20,5 +20,5 @@ const CARD_ART: Record<string, string> = {
 }
 
 export function getCardArt(artKey: string): string | undefined {
-  return CARD_ART[artKey]
+  return Object.hasOwn(CARD_ART, artKey) ? CARD_ART[artKey] : undefined
 }

@@ -9,4 +9,8 @@ describe('getCardArt', () => {
   it('returns undefined for an unknown art key', () => {
     expect(getCardArt('missing-art')).toBeUndefined()
   })
+
+  it('returns undefined for prototype keys', () => {
+    expect(getCardArt('toString')).toBeUndefined()
+  })
 })

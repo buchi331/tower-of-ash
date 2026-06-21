@@ -197,6 +197,8 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   border-radius: 8px;
 }
 .player-console .bar-fill { background: linear-gradient(90deg, #295539, #4f9c65); }
+.player-readout { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.player-readout .bar { margin: 0; }
 .resources { display: flex; align-items: center; gap: 8px; }
 .energy {
   min-width: 48px;

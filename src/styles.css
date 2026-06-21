@@ -256,6 +256,8 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .player-avatar.pose-defend .actor-aura { opacity: 1; border-color: rgba(109, 167, 184, .8); box-shadow: 0 0 28px rgba(109, 167, 184, .42) inset; }
 .player-avatar.pose-cast .actor-aura { opacity: 1; border-color: rgba(143, 191, 90, .76); box-shadow: 0 0 30px rgba(143, 191, 90, .34) inset; }
 .player-console .bar-fill { background: linear-gradient(90deg, #295539, #4f9c65); }
+.player-readout { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.player-readout .bar { margin: 0; }
 .resources { display: flex; align-items: center; gap: 8px; }
 .energy {
   min-width: 48px;

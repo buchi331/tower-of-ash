@@ -43,6 +43,7 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 }
 
 .combat {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -112,10 +113,23 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   object-fit: contain;
   filter: contrast(1.08) saturate(1.05);
 }
+.enemy-frame.pose-attack { animation: enemy-lunge .42s ease-out; }
+.enemy-frame.pose-hit { animation: enemy-hit .36s ease-out; }
+.enemy-frame.pose-defend .actor-aura { opacity: 1; border-color: rgba(109, 167, 184, .7); box-shadow: 0 0 34px rgba(109, 167, 184, .34) inset; }
+.enemy-frame.pose-cast .actor-aura { opacity: 1; border-color: rgba(143, 191, 90, .72); box-shadow: 0 0 38px rgba(143, 191, 90, .28) inset; }
 .enemy-vignette {
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 50% 38%, transparent 24%, rgba(0,0,0,.62) 100%);
+}
+.actor-aura {
+  position: absolute;
+  inset: 8px;
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  transition: opacity .12s ease;
 }
 .enemy-readout {
   position: relative;
@@ -190,12 +204,57 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .player-console {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 72px 1fr auto;
   gap: 12px;
   align-items: center;
   padding: 10px;
   border-radius: 8px;
 }
+.player-avatar {
+  position: relative;
+  width: 64px;
+  height: 72px;
+  display: grid;
+  place-items: end center;
+  border: 1px solid rgba(216, 175, 100, .28);
+  border-radius: 7px;
+  background: radial-gradient(circle at 50% 22%, rgba(216, 175, 100, .16), rgba(0,0,0,.24) 58%);
+  overflow: hidden;
+}
+.player-figure {
+  position: relative;
+  width: 28px;
+  height: 50px;
+  margin-bottom: 7px;
+  border-radius: 16px 16px 8px 8px;
+  background: linear-gradient(180deg, #d6c6a7, #4e3b2d 28%, #16110d 100%);
+  box-shadow: 0 0 16px rgba(0,0,0,.65);
+}
+.player-figure::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #e6d5b7, #71523b);
+}
+.player-figure::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: -12px;
+  width: 52px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #c9b27d 22%, #433326 78%, transparent);
+  transform: rotate(-16deg);
+}
+.player-avatar.pose-attack { animation: player-lunge .42s ease-out; }
+.player-avatar.pose-hit { animation: player-hit .36s ease-out; }
+.player-avatar.pose-defend .actor-aura { opacity: 1; border-color: rgba(109, 167, 184, .8); box-shadow: 0 0 28px rgba(109, 167, 184, .42) inset; }
+.player-avatar.pose-cast .actor-aura { opacity: 1; border-color: rgba(143, 191, 90, .76); box-shadow: 0 0 30px rgba(143, 191, 90, .34) inset; }
 .player-console .bar-fill { background: linear-gradient(90deg, #295539, #4f9c65); }
 .resources { display: flex; align-items: center; gap: 8px; }
 .energy {
@@ -217,6 +276,10 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   background: linear-gradient(180deg, #30251b, #16110e);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 7px 14px rgba(0,0,0,.28);
 }
+.btn:disabled {
+  cursor: wait;
+  opacity: .55;
+}
 .btn:active { transform: translateY(1px); }
 .btn.primary,
 .end-turn {
@@ -232,6 +295,7 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   overflow-x: auto;
   scroll-snap-type: x proximity;
 }
+.is-animating .hand { pointer-events: none; }
 .card {
   --card-accent: var(--gold);
   position: relative;
@@ -405,6 +469,111 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 }
 .player-pop { top: -8px; }
 
+.battle-effect {
+  position: absolute;
+  z-index: 8;
+  pointer-events: none;
+}
+.fx-slash {
+  left: 28%;
+  top: 31%;
+  width: 190px;
+  height: 26px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 236, 202, .92), rgba(228, 93, 49, .9), transparent);
+  box-shadow: 0 0 22px rgba(228, 93, 49, .72);
+  transform: rotate(-18deg);
+  animation: slash-travel .48s ease-out forwards;
+}
+.fx-poison {
+  left: 38%;
+  top: 34%;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(143, 191, 90, .84), rgba(85, 130, 49, .22) 58%, transparent 72%);
+  filter: blur(1px);
+  animation: poison-bloom .62s ease-out forwards;
+}
+.fx-guard,
+.fx-enemy-guard {
+  width: 86px;
+  height: 86px;
+  border: 2px solid rgba(109, 167, 184, .75);
+  border-radius: 50%;
+  box-shadow: 0 0 24px rgba(109, 167, 184, .55), inset 0 0 18px rgba(109, 167, 184, .32);
+  animation: guard-pulse .56s ease-out forwards;
+}
+.fx-guard { left: 28px; top: calc(100% - 250px); }
+.fx-enemy-guard { right: 32px; top: 86px; }
+.fx-spell,
+.fx-enemy-spell {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background:
+    conic-gradient(from 0deg, transparent, rgba(143, 191, 90, .9), transparent, rgba(109, 167, 184, .75), transparent);
+  mask: radial-gradient(circle, transparent 42%, #000 44%);
+  animation: spell-spin .7s ease-out forwards;
+}
+.fx-spell { left: 30px; top: calc(100% - 244px); }
+.fx-enemy-spell { right: 44px; top: 90px; }
+.fx-enemy-attack {
+  right: 20%;
+  top: 44%;
+  width: 180px;
+  height: 22px;
+  border-radius: 999px;
+  background: linear-gradient(270deg, transparent, rgba(255, 228, 175, .9), rgba(185, 50, 45, .95), transparent);
+  box-shadow: 0 0 20px rgba(185, 50, 45, .65);
+  transform: rotate(16deg);
+  animation: enemy-strike .52s ease-out forwards;
+}
+
+@keyframes player-lunge {
+  0%, 100% { transform: translateX(0) translateY(0) scale(1); }
+  45% { transform: translateX(18px) translateY(-7px) scale(1.05); }
+}
+@keyframes enemy-lunge {
+  0%, 100% { transform: translateX(0) scale(1); }
+  45% { transform: translateX(-14px) scale(1.03); }
+}
+@keyframes player-hit {
+  0%, 100% { transform: translateX(0); filter: brightness(1); }
+  25% { transform: translateX(-8px); filter: brightness(1.6); }
+  60% { transform: translateX(5px); }
+}
+@keyframes enemy-hit {
+  0%, 100% { transform: translateX(0); filter: brightness(1); }
+  25% { transform: translateX(8px); filter: brightness(1.45) saturate(1.25); }
+  60% { transform: translateX(-5px); }
+}
+@keyframes slash-travel {
+  0% { opacity: 0; transform: translate(-120px, 120px) rotate(-18deg) scale(.55); }
+  24% { opacity: 1; }
+  100% { opacity: 0; transform: translate(72px, -76px) rotate(-18deg) scale(1.08); }
+}
+@keyframes enemy-strike {
+  0% { opacity: 0; transform: translate(110px, -84px) rotate(16deg) scale(.62); }
+  24% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-90px, 88px) rotate(16deg) scale(1.05); }
+}
+@keyframes poison-bloom {
+  0% { opacity: 0; transform: translate(36px, 64px) scale(.45); }
+  45% { opacity: .95; }
+  100% { opacity: 0; transform: translate(52px, -52px) scale(1.36); }
+}
+@keyframes guard-pulse {
+  0% { opacity: 0; transform: scale(.62); }
+  44% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.26); }
+}
+@keyframes spell-spin {
+  0% { opacity: 0; transform: rotate(0deg) scale(.55); }
+  40% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(260deg) scale(1.2); }
+}
+
 .relic-bar {
   display: flex;
   flex-wrap: nowrap;
@@ -473,9 +642,19 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
 @media (max-width: 380px) {
   .combat { padding-inline: 8px; }
-  .player-console { grid-template-columns: 1fr; }
+  .player-console { grid-template-columns: 58px 1fr; }
+  .player-avatar { width: 52px; height: 62px; }
   .resources { justify-content: space-between; }
+  .resources { grid-column: 1 / -1; }
   .card { flex-basis: 108px; height: 168px; }
   .card-art { height: 70px; }
   .intent { max-width: 50%; font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

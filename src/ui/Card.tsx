@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 import type { CardDef } from '../model/types'
 import { getCardArt } from '../assets/cardArt'
 
-const COLOR_VAR: Record<CardDef['color'], string> = { red: 'var(--red)', blue: 'var(--blue)', purple: 'var(--purple)' }
+const COLOR_VAR: Record<CardDef['color'], string> = { red: 'var(--ember)', blue: 'var(--ward)', purple: 'var(--venom)' }
 
 export function Card({ card, disabled, onPlay }: { card: CardDef; disabled?: boolean; onPlay?: () => void }) {
   const artUrl = getCardArt(card.art)

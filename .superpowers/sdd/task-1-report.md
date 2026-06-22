@@ -20,3 +20,11 @@ Notes:
 
 - I kept the stage target structure and timing math deterministic.
 - The Vitest failure is pre-existing and outside the four task-owned rhythm files.
+
+Task 1 follow-up:
+
+- Updated `src/rhythm/timing.test.ts` so `summarizeResults(['perfect', 'good', 'miss', 'miss'], 4)` now expects rank `C`, matching the spec threshold of `B >= 55%`.
+- `npm.cmd run test:run -- src/rhythm/timing.test.ts` -> failed with the existing Vite/esbuild config error:
+  - `Cannot read directory "../../../..": Access is denied.`
+  - `Could not resolve "C:\\Users\\buchi\\OneDrive\\ゲーム開発\\.worktrees\\codex-weird-interview\\vite.config.ts"`
+- `npm.cmd run test:run` -> failed with the same existing Vite/esbuild config error.

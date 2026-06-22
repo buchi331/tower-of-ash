@@ -45,7 +45,7 @@ describe('rhythm timing', () => {
       maxScore: 4,
       rank: 'S',
     })
-    expect(summarizeResults(['perfect', 'good', 'miss', 'miss'], 4).rank).toBe('B')
+    expect(summarizeResults(['perfect', 'good', 'miss', 'miss'], 4).rank).toBe('C')
     expect(summarizeResults(['good', 'miss', 'miss', 'miss'], 4).rank).toBe('C')
   })
 })

@@ -24,6 +24,21 @@ export function canJudgeTarget(target: StageTarget, judgedIds: ReadonlySet<strin
   return !judgedIds.has(target.id)
 }
 
+export function findTargetForInput(
+  targets: readonly StageTarget[],
+  inputMs: number,
+  judgedIds: ReadonlySet<string>,
+): StageTarget | null {
+  return (
+    targets.find((target) => {
+      if (!canJudgeTarget(target, judgedIds)) return false
+      const cueMs = beatToMs(target.cueBeat)
+      const targetMs = beatToMs(target.targetBeat)
+      return inputMs >= cueMs && !isTargetMissed(targetMs, inputMs)
+    }) ?? null
+  )
+}
+
 export function summarizeResults(judgments: readonly Judgment[], totalTargets: number): ResultSummary {
   const perfect = judgments.filter((judgment) => judgment === 'perfect').length
   const good = judgments.filter((judgment) => judgment === 'good').length

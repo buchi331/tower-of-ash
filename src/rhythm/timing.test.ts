@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { BEAT_MS, GOOD_WINDOW_MS, INTERVIEW_STAGE, PERFECT_WINDOW_MS } from './stage'
-import { beatToMs, canJudgeTarget, isTargetMissed, judgeInput, judgeOffset, summarizeResults } from './timing'
+import { beatToMs, canJudgeTarget, findTargetForInput, isTargetMissed, judgeInput, judgeOffset, summarizeResults } from './timing'
 
 describe('rhythm timing', () => {
   it('converts beats to milliseconds at 120 BPM', () => {
@@ -34,6 +34,28 @@ describe('rhythm timing', () => {
     const target = INTERVIEW_STAGE[0]
     expect(canJudgeTarget(target, new Set())).toBe(true)
     expect(canJudgeTarget(target, new Set([target.id]))).toBe(false)
+  })
+
+  it('finds the current target when input lands within its score window', () => {
+    const target = INTERVIEW_STAGE[0]
+
+    expect(findTargetForInput(INTERVIEW_STAGE, beatToMs(target.targetBeat), new Set())).toBe(target)
+  })
+
+  it('consumes the earliest cued unjudged target for off-window input before auto-miss', () => {
+    const first = INTERVIEW_STAGE[0]
+    const inputMs = beatToMs(first.cueBeat)
+
+    expect(findTargetForInput(INTERVIEW_STAGE, inputMs, new Set())).toBe(first)
+  })
+
+  it('skips targets whose cue has not appeared yet or whose miss window already elapsed', () => {
+    const first = INTERVIEW_STAGE[0]
+    const second = INTERVIEW_STAGE[1]
+
+    expect(findTargetForInput(INTERVIEW_STAGE, beatToMs(first.cueBeat) - 1, new Set())).toBeNull()
+    expect(findTargetForInput(INTERVIEW_STAGE, beatToMs(first.targetBeat) + GOOD_WINDOW_MS + 1, new Set())).toBeNull()
+    expect(findTargetForInput(INTERVIEW_STAGE, beatToMs(second.cueBeat), new Set([first.id]))).toBe(second)
   })
 
   it('summarizes score and rank', () => {

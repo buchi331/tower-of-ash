@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRhythmAudio } from './audio/useRhythmAudio'
-import { BEAT_MS, GOOD_WINDOW_MS, INTERVIEW_STAGE, STAGE_END_BEAT } from './rhythm/stage'
-import { beatToMs, canJudgeTarget, isTargetMissed, judgeInput, summarizeResults } from './rhythm/timing'
+import { BEAT_MS, INTERVIEW_STAGE, STAGE_END_BEAT } from './rhythm/stage'
+import { beatToMs, canJudgeTarget, findTargetForInput, isTargetMissed, judgeInput, summarizeResults } from './rhythm/timing'
 import type { GamePhase, JudgedTarget, Judgment, ResultSummary, StageTarget } from './rhythm/types'
 
 const EMPTY_RESULT: ResultSummary = {
@@ -31,7 +31,7 @@ export default function App() {
   const [nowMs, setNowMs] = useState(0)
   const [judged, setJudged] = useState<JudgedTarget[]>([])
   const [lastJudgment, setLastJudgment] = useState<Judgment | null>(null)
-  const [lastText, setLastText] = useState('Space / Tap')
+  const [lastText, setLastText] = useState('Space / Enter / Tap')
   const [lastBeat, setLastBeat] = useState(-1)
   const [result, setResult] = useState<ResultSummary>(EMPTY_RESULT)
   const judgedIds = useMemo(() => new Set(judged.map((entry) => entry.targetId)), [judged])
@@ -57,7 +57,7 @@ export default function App() {
     audio.ensureAudio()
     setJudged([])
     setLastJudgment(null)
-    setLastText('Space / Tap')
+    setLastText('Space / Enter / Tap')
     setResult(EMPTY_RESULT)
     setLastBeat(-1)
     setStartAt(performance.now())
@@ -69,29 +69,25 @@ export default function App() {
     if (phase !== 'playing') return
     audio.ensureAudio()
     const inputMs = Math.max(0, performance.now() - startAt)
-    const openTarget = INTERVIEW_STAGE.find((target) => {
-      if (!canJudgeTarget(target, judgedIds)) return false
-      const targetMs = beatToMs(target.targetBeat)
-      return Math.abs(inputMs - targetMs) <= GOOD_WINDOW_MS
-    })
+    const target = findTargetForInput(INTERVIEW_STAGE, inputMs, judgedIds)
 
-    if (!openTarget) {
+    if (!target) {
       setLastJudgment('miss')
       setLastText('Not now!')
       audio.playHit('miss')
       return
     }
 
-    const targetMs = beatToMs(openTarget.targetBeat)
+    const targetMs = beatToMs(target.targetBeat)
     const judgment = judgeInput(targetMs, inputMs)
     const entry: JudgedTarget = {
-      targetId: openTarget.id,
+      targetId: target.id,
       judgment,
       offsetMs: Math.round(inputMs - targetMs),
     }
     setJudged((previous) => [...previous, entry])
     setLastJudgment(judgment)
-    setLastText(judgment === 'miss' ? openTarget.missText : openTarget.successText)
+    setLastText(judgment === 'miss' ? target.missText : target.successText)
     audio.playHit(judgment)
   }, [audio, judgedIds, phase, startAt])
 
@@ -230,7 +226,7 @@ export default function App() {
           {beat % 4 + 1}
         </div>
         <strong>{formatJudgment(lastJudgment)}</strong>
-        <span>Space / Tap</span>
+        <span>Space / Enter / Tap</span>
       </section>
     </main>
   )
